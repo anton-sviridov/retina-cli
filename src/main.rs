@@ -1,19 +1,20 @@
 use clap::{Parser, Subcommand};
+use random_word::Lang;
 use logger::DummyLogger;
 use std::collections::VecDeque;
 use std::fs;
 use std::path::PathBuf;
 mod logger;
 
-// fn validate_package_name(name: &str) -> Result<(), String> {
-//     if name.trim().len() != name.len() {
-//         Err(String::from(
-//             "package name cannot have leading and trailing space",
-//         ))
-//     } else {
-//         Ok(())
-//     }
-// }
+fn validate_package_name(name: &str) -> Result<(), String> {
+    if name.trim().len() != name.len() {
+        Err(String::from(
+            "package name cannot have leading and trailing space",
+        ))
+    } else {
+        Ok(())
+    }
+}
 
 #[derive(Parser, Debug)]
 #[clap(author = "Author Name", version, about)]
@@ -30,13 +31,13 @@ struct Arguments {
 
 #[derive(Subcommand, Debug)]
 enum SubCommand {
-    /// Count how many times the package is used
-    // Count {
-    //     #[clap(forbid_empty_values = true, validator = validate_package_name)]
-    //     /// Name of the package to search
-    //     package_name: String,
-    // },
-    // /// list all the projects
+     // Count how many times the package is used
+    Count {
+        #[clap(forbid_empty_values = true, validator = validate_package_name)]
+        /// Name of the package to search
+        package_name: String,
+    },
+    /// list all the projects
     // Projects {
     //     #[clap(short, long, default_value_t = String::from("."),forbid_empty_values = true, validator = validate_package_name)]
     //     /// directory to start exploring from
@@ -47,48 +48,52 @@ enum SubCommand {
     // },
     Anton {},
     NoteA {},
+    Decide {
+        #[clap(forbid_empty_values = true)]
+        counter: usize,
+    },
 }
 
 /// Not the dracula
-// fn count(name: &str, max_depth: usize, logger: &logger::DummyLogger) -> std::io::Result<usize> {
-//     let mut count = 0;
-//     logger.debug("Initializing queue");
-//     // queue to store next dirs to explore
-//     let mut queue = VecDeque::new();
-//     logger.debug("Adding current dir to queue");
-//     // start with current dir
-//     queue.push_back((PathBuf::from("."), 0));
-//     logger.extra("starting");
-//     loop {
-//         if queue.is_empty() {
-//             logger.extra("queue empty");
-//             break;
-//         }
-//         let (path, crr_depth) = queue.pop_back().unwrap();
-//         logger.debug(format!("path :{:?}, depth :{}", path, crr_depth));
-//         if crr_depth > max_depth {
-//             continue;
-//         }
-//         logger.extra(format!("exploring {:?}", path));
-//         for dir in fs::read_dir(path)? {
-//             let dir = dir?;
-//             // we are concerned only if it is a directory
-//             if dir.file_type()?.is_dir() {
-//                 if dir.file_name() == name {
-//                     logger.log(format!("match found at {:?}", dir.path()));
-//                     // we have a match, so stop exploring further
-//                     count += 1;
-//                 } else {
-//                     logger.debug(format!("adding {:?} to queue", dir.path()));
-//                     // not a match so check its sub-dirs
-//                     queue.push_back((dir.path(), crr_depth + 1));
-//                 }
-//             }
-//         }
-//     }
-//     logger.extra("search completed");
-//     return Ok(count);
-// }
+fn count(name: &str, max_depth: usize, logger: &logger::DummyLogger) -> std::io::Result<usize> {
+    let mut count = 0;
+    logger.debug("Initializing queue");
+    // queue to store next dirs to explore
+    let mut queue = VecDeque::new();
+    logger.debug("Adding current dir to queue");
+    // start with current dir
+    queue.push_back((PathBuf::from("."), 0));
+    logger.extra("starting");
+    loop {
+        if queue.is_empty() {
+            logger.extra("queue empty");
+            break;
+        }
+        let (path, crr_depth) = queue.pop_back().unwrap();
+        logger.debug(format!("path :{:?}, depth :{}", path, crr_depth));
+        if crr_depth > max_depth {
+            continue;
+        }
+        logger.extra(format!("exploring {:?}", path));
+        for dir in fs::read_dir(path)? {
+            let dir = dir?;
+            // we are concerned only if it is a directory
+            if dir.file_type()?.is_dir() {
+                if dir.file_name() == name {
+                    logger.log(format!("match found at {:?}", dir.path()));
+                    // we have a match, so stop exploring further
+                    count += 1;
+                } else {
+                    logger.debug(format!("adding {:?} to queue", dir.path()));
+                    // not a match so check its sub-dirs
+                    queue.push_back((dir.path(), crr_depth + 1));
+                }
+            }
+        }
+    }
+    logger.extra("search completed");
+    return Ok(count);
+}
 
 fn projects(
     start: &str,
@@ -155,14 +160,21 @@ fn a_note() -> std::io::Result<usize> {
     Ok(1)
 }
 
+fn decide(counter: &usize) -> std::io::Result<usize> {
+    // let mut v = vec!["loh"];
+    let word = random_word::gen(Lang::En);
+    println!("{word}");
+    Ok(1)
+}
+
 fn main() {
     let args = Arguments::parse();
     let logger = logger::DummyLogger::new(args.verbosity);
     match args.cmd {
-        // SubCommand::Count { package_name } => match count(&package_name, args.max_depth, &logger) {
-        //     Ok(c) => println!("{} uses found", c),
-        //     Err(e) => eprintln!("error in processing : {}", e),
-        // },
+        SubCommand::Count { package_name } => match count(&package_name, args.max_depth, &logger) {
+            Ok(c) => println!("{} uses found", c),
+            Err(e) => eprintln!("error in processing : {}", e),
+        },
         // SubCommand::Projects {
         //     start_path,
         //     exclude,
@@ -182,6 +194,9 @@ fn main() {
             Ok(_) => println!("a"),
             Err(e) => eprintln!("error in processing : {}", e),
         },
-
+        SubCommand::Decide { counter } => match decide(&counter) {
+            Ok(_) => {},
+            Err(e) => eprintln!("error in processing : {}", e),
+        },
     }
 }
