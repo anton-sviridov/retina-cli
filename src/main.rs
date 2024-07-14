@@ -160,10 +160,12 @@ fn a_note() -> std::io::Result<usize> {
     Ok(1)
 }
 
-fn decide(counter: &usize) -> std::io::Result<usize> {
-    // let mut v = vec!["loh"];
-    let word = random_word::gen(Lang::En);
-    println!("{word}");
+fn decide(counter: &usize ) -> std::io::Result<usize> {
+    for _ in 0..*counter {
+        let word = random_word::gen(Lang::En);
+        print!("{} ", word);
+    }
+    println!("");
     Ok(1)
 }
 
