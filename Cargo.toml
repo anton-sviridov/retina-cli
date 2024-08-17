@@ -1,5 +1,5 @@
 [package]
-name = "clap-parsing"
+name = "suiwei"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.9", features = ["derive"] }
 random_word = { version = "0.4.3", features = ["en"] }
+diesel = { version = "2.2.2", features = ["sqlite"] }
