@@ -10,7 +10,8 @@ use suiwei::*;
 #[command(version, about, long_about = None)]
 struct Cli {
     /// Optional name to operate on
-    name: Option<String>,
+    #[arg(short, long)]
+    database: Option<String>,
 
     /// Sets a custom config file
     #[arg(short, long, value_name = "FILE")]
@@ -23,7 +24,10 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Decide,
-    Remember,
+    Remember {
+        #[arg(short, long)]
+        database: Option<String>,
+    }
 }
 
 fn decide() {
@@ -32,10 +36,12 @@ fn decide() {
     println!("");
 }
 
-fn remember() {
+fn remember(database_path: &str) {
+    println!("{}", database_path);
     use self::schema::memories::dsl::*;
 
-    let connection = &mut establish_connection();
+    // let connection = &mut establish_connection(database_path);
+    let connection = &mut SqliteConnection::establish(database_path).unwrap();
     let results = memories
         .limit(5)
         .select(Memory::as_select())
@@ -53,9 +59,9 @@ fn remember() {
 fn main() {
     let cli = Cli::parse();
 
-    // You can check the value provided by positional arguments, or option arguments
-    if let Some(name) = cli.name.as_deref() {
-        println!("Value for name: {name}");
+    // To check provided values
+    if let Some(database) = cli.database.as_deref() {
+        println!("Value for name: {}", database);
     }
 
     if let Some(config_path) = cli.config.as_deref() {
@@ -70,8 +76,10 @@ fn main() {
         Some(Commands::Decide) => {
             decide()
         },
-        Some(Commands::Remember) => {
-            remember()
+        Some(Commands::Remember { database }) => {
+            if let Some(database) = database.as_deref() {
+                remember(database)
+            }
         },
         None => {},
     }
