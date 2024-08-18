@@ -9,3 +9,12 @@ pub struct Memory {
     pub description: String,
     pub date: String,
 }
+
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::memories)]
+pub struct NewMemory<'a> {
+    pub image: &'a str,
+    pub description: &'a str,
+    pub date: &'a str,
+}

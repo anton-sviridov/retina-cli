@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.9", features = ["derive"] }
 random_word = { version = "0.4.3", features = ["en"] }
-diesel = { version = "2.2.2", features = ["sqlite"] }
+diesel = { version = "2.2.2", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }

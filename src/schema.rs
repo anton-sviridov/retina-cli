@@ -2,7 +2,7 @@
 
 diesel::table! {
     memories (id) {
-        id -> Integer,
+        id -> Nullable<Integer>,
         image -> Text,
         description -> Text,
         date -> Text,

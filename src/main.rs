@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use random_word::Lang;
-use suiwei::models::*;
+use suiwei::models::{Memory, NewMemory};
 use diesel::prelude::*;
 use suiwei::*;
 
@@ -27,6 +27,16 @@ enum Commands {
     Remember {
         #[arg(short, long)]
         database: Option<String>,
+    },
+    Record {
+        #[arg(short, long)]
+        file: Option<String>,
+        
+        #[arg(short, long)]
+        comment: Option<String>,
+
+        #[arg(short, long)]
+        database: Option<String>,
     }
 }
 
@@ -36,12 +46,12 @@ fn decide() {
     println!("");
 }
 
-fn remember(database_path: &str) {
-    println!("{}", database_path);
+fn remember(database: &str) {
+    println!("{}", database);
     use self::schema::memories::dsl::*;
 
     // let connection = &mut establish_connection(database_path);
-    let connection = &mut SqliteConnection::establish(database_path).unwrap();
+    let connection = &mut SqliteConnection::establish(database).unwrap();
     let results = memories
         .limit(5)
         .select(Memory::as_select())
@@ -54,6 +64,20 @@ fn remember(database_path: &str) {
         println!("-----------\n");
         println!("{}", memory.description);
     }
+}
+
+fn record(file: &str, comment: &str, database: &str) {
+    use self::schema::memories;
+    let connection = &mut SqliteConnection::establish(database).unwrap();
+
+
+    let new_memory = NewMemory { image: file, description: comment, date: "" };
+
+    diesel::insert_into(memories::table)
+        .values(&new_memory)
+        .returning(Memory::as_returning())
+        .get_result(connection)
+        .expect("Error saving new post");
 }
 
 fn main() {
@@ -81,7 +105,15 @@ fn main() {
                 remember(database)
             }
         },
+        Some(Commands::Record { file, comment, database }) => {
+            if let Some(file) = file.as_deref() {
+                if let Some(comment) = comment.as_deref() {
+                    if let Some(database) = database.as_deref() {
+                        record(file, comment, database)
+                    }
+                }
+            }
+        },
         None => {},
     }
-
 }
