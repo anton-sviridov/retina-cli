@@ -29,14 +29,14 @@ enum Commands {
         database: Option<String>,
     },
     Record {
-        #[arg(short, long)]
-        file: Option<String>,
+        #[arg(short, long, required=true)]
+        file: String,
         
-        #[arg(short, long)]
-        comment: Option<String>,
+        #[arg(short, long, required=true)]
+        comment: String,
 
-        #[arg(short, long)]
-        database: Option<String>,
+        #[arg(short, long, required=true)]
+        database: String,
     }
 }
 
@@ -106,13 +106,7 @@ fn main() {
             }
         },
         Some(Commands::Record { file, comment, database }) => {
-            if let Some(file) = file.as_deref() {
-                if let Some(comment) = comment.as_deref() {
-                    if let Some(database) = database.as_deref() {
-                        record(file, comment, database)
-                    }
-                }
-            }
+            record(file, comment, database)
         },
         None => {},
     }
