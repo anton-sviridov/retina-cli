@@ -1,7 +1,7 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    memories (id) {
+    detections (id) {
         id -> Integer,
         image -> Text,
         description -> Text,

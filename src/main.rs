@@ -1,7 +1,6 @@
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
-use random_word::Lang;
-use suiwei::models::{Memory, NewMemory};
+use suiwei::models::{Detection, NewDetection};
 use diesel::prelude::*;
 use suiwei::*;
 
@@ -23,12 +22,11 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    Decide,
-    Remember {
+    Detect {
         #[arg(short, long)]
         database: Option<String>,
     },
-    Record {
+    Report {
         #[arg(short, long, required=true)]
         file: String,
         
@@ -40,42 +38,37 @@ enum Commands {
     }
 }
 
-fn decide() {
-    let word = random_word::gen(Lang::En);
-    print!("{} ", word);
-    println!("");
-}
 
-fn remember(database: &str) {
+fn detect(database: &str) {
     println!("{}", database);
-    use self::schema::memories::dsl::*;
+    use self::schema::detections::dsl::*;
 
     // let connection = &mut establish_connection(database_path);
     let connection = &mut SqliteConnection::establish(database).unwrap();
-    let results = memories
+    let results = detections
         .limit(5)
-        .select(Memory::as_select())
+        .select(Detection::as_select())
         .load(connection)
-        .expect("Error loading memories");
+        .expect("Error loading detections");
 
-    println!("Displaying {} memories", results.len());
-    for memory in results {
-        println!("{}", memory.image);
+    println!("Displaying {} detections", results.len());
+    for detection in results {
+        println!("{}", detection.image);
         println!("-----------\n");
-        println!("{}", memory.description);
+        println!("{}", detection.description);
     }
 }
 
-fn record(file: &str, comment: &str, database: &str) {
-    use self::schema::memories;
+fn report(file: &str, comment: &str, database: &str) {
+    use self::schema::detections;
     let connection = &mut SqliteConnection::establish(database).unwrap();
 
 
-    let new_memory = NewMemory { image: file, description: comment, date: "" };
+    let new_memory = NewDetection { image: file, description: comment, date: "" };
 
-    diesel::insert_into(memories::table)
+    diesel::insert_into(detections::table)
         .values(&new_memory)
-        .returning(Memory::as_returning())
+        .returning(Detection::as_returning())
         .get_result(connection)
         .expect("Error saving new post");
 }
@@ -97,16 +90,13 @@ fn main() {
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match &cli.command {
-        Some(Commands::Decide) => {
-            decide()
-        },
-        Some(Commands::Remember { database }) => {
+        Some(Commands::Detect { database }) => {
             if let Some(database) = database.as_deref() {
-                remember(database)
+                detect(database)
             }
         },
-        Some(Commands::Record { file, comment, database }) => {
-            record(file, comment, database)
+        Some(Commands::Report { file, comment, database }) => {
+            report(file, comment, database)
         },
         None => {},
     }

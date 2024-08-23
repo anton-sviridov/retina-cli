@@ -1,9 +1,9 @@
 use diesel::prelude::*;
 
 #[derive(Queryable, Selectable)]
-#[diesel(table_name = crate::schema::memories)]
+#[diesel(table_name = crate::schema::detections)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct Memory {
+pub struct Detection {
     pub id: i32,
     pub image: String,
     pub description: String,
@@ -12,8 +12,8 @@ pub struct Memory {
 
 
 #[derive(Insertable)]
-#[diesel(table_name = crate::schema::memories)]
-pub struct NewMemory<'a> {
+#[diesel(table_name = crate::schema::detections)]
+pub struct NewDetection<'a> {
     pub image: &'a str,
     pub description: &'a str,
     pub date: &'a str,
