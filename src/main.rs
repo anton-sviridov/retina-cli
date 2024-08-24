@@ -1,41 +1,5 @@
-use clap::{Parser, Subcommand};
-use retina_cli::cli::{detect, report};
-use std::path::PathBuf;
-
-
-#[derive(Parser)]
-#[command(version, about, long_about = None)]
-pub struct Cli {
-    /// Optional name to operate on
-    #[arg(short, long)]
-    database: Option<String>,
-
-    /// Sets a custom config file
-    #[arg(short, long, value_name = "FILE")]
-    config: Option<PathBuf>,
-
-    #[command(subcommand)]
-    command: Option<Commands>,
-}
-
-#[derive(Subcommand)]
-pub enum Commands {
-    // TODO: add flags email, password, image
-    Detect {
-        #[arg(short, long, required = true)]
-        file: String,
-
-        #[arg(short, long, required = true)]
-        comment: String,
-
-        #[arg(short, long, required = true)]
-        database: String,
-    },
-    Report {
-        #[arg(short, long, required = true)]
-        database: String,
-    },
-}
+use clap::Parser;
+use retina_cli::cli::{report::report, detect::detect, Commands, Cli};
 
 
 fn main() {
