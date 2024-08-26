@@ -21,6 +21,6 @@ pub fn report(database: &str) {
     for detection in results {
         println!("{}", detection.image);
         println!("-----------\n");
-        println!("{}", detection.description);
+        // println!("{}", detection.structure);
     }
 }

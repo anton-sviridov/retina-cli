@@ -6,8 +6,8 @@ use diesel::prelude::*;
 pub struct Detection {
     pub id: i32,
     pub image: String,
-    pub description: String,
     pub date: String,
+    pub structure: String
 }
 
 
@@ -15,6 +15,6 @@ pub struct Detection {
 #[diesel(table_name = crate::schema::detections)]
 pub struct NewDetection<'a> {
     pub image: &'a str,
-    pub description: &'a str,
     pub date: &'a str,
+    pub structure: String
 }

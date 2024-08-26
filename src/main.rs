@@ -19,13 +19,11 @@ fn main() {
     match &cli.command {
         Some(Commands::Report { database }) => report(database),
         Some(Commands::Detect {
-            file,
-            comment,
             database,
             email,
             password,
             image,
-        }) => detect(file, comment, database, email, password, image),
+        }) => detect(database, email, password, image),
         None => {}
     }
 }

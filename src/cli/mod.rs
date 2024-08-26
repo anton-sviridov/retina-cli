@@ -25,12 +25,6 @@ pub enum Commands {
     // TODO: add flags email, password, image
     Detect {
         #[arg(short, long, required = true)]
-        file: String,
-
-        #[arg(short, long, required = true)]
-        comment: String,
-
-        #[arg(short, long, required = true)]
         database: String,
     
         #[arg(short, long, required = true)]

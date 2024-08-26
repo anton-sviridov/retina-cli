@@ -4,7 +4,7 @@ diesel::table! {
     detections (id) {
         id -> Integer,
         image -> Text,
-        description -> Text,
+        structure -> Text,
         date -> Text,
     }
 }
