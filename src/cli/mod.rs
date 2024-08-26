@@ -32,6 +32,15 @@ pub enum Commands {
 
         #[arg(short, long, required = true)]
         database: String,
+    
+        #[arg(short, long, required = true)]
+        email: String,
+    
+        #[arg(short, long, required = true)]
+        password: String,
+    
+        #[arg(short, long, required = true)]
+        image: String,
     },
     Report {
         #[arg(short, long, required = true)]

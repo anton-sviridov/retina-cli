@@ -22,7 +22,10 @@ fn main() {
             file,
             comment,
             database,
-        }) => detect(file, comment, database),
+            email,
+            password,
+            image,
+        }) => detect(file, comment, database, email, password, image),
         None => {}
     }
 }

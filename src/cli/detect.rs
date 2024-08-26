@@ -3,7 +3,7 @@ use crate::models::{Detection, NewDetection};
 
 
 // TODO: add flags email, password, image
-pub fn detect(file: &str, comment: &str, database: &str) {
+pub fn detect(file: &str, comment: &str, database: &str, email: &str, password: &str, image: &str) {
     // TODO: Call a function login with parameters email (&str) and password (&str). If successfull, the function returns a token;
     // let token: &str = login(email, password);
 
