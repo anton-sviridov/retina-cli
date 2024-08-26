@@ -34,7 +34,7 @@ pub enum Commands {
         password: String,
     
         #[arg(short, long, required = true)]
-        image: String,
+        path: String,
     },
     Report {
         #[arg(short, long, required = true)]

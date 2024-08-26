@@ -22,8 +22,8 @@ fn main() {
             database,
             email,
             password,
-            image,
-        }) => detect(database, email, password, image),
+            path,
+        }) => detect(database, email, password, path),
         None => {}
     }
 }

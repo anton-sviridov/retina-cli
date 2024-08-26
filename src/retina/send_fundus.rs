@@ -2,12 +2,12 @@ use std::collections::HashMap;
 use crate::retina::FundusData;
 
 
-pub fn send_fundus(token: &str, image: &str) -> Result<FundusData, String> {
+pub fn send_fundus(token: &str, data_url: &str) -> Result<FundusData, String> {
     let client = reqwest::blocking::Client::new();
 
     let mut fundus_data = HashMap::new();
     fundus_data.insert("token", token);
-    fundus_data.insert("image", image);
+    fundus_data.insert("image", data_url);
 
     println!("{:#?}", fundus_data);
 

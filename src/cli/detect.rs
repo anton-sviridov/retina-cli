@@ -3,15 +3,18 @@ use crate::models::{Detection, NewDetection};
 use crate::retina::login::login;
 
 
-// TODO: add flags email, password, image
-pub fn detect(database: &str, email: &str, password: &str, image: &str) {
-    // TODO: Call a function login with parameters email (&str) and password (&str). If successfull, the function returns a token;
-    // let token: &str = login(email, password);
+pub fn detect(database: &str, email: &str, password: &str, path: &str) {
     let token = login(email, password).unwrap();
     println!("token: {token}");
     
-    // TODO: Convert an image to webp;
-    // TODO: Call a function send_fundus with token (&str) and webp image in data url (&str). If successfull, get result (struct FundusData), if not — print an error message;
+    // get file from image path
+    // let image: DynamicImage = image::open(path).unwrap();
+
+    // TODO: convert an image to base64 Data URL in webp — call retina/convert.rs
+    // let dataurl = convert_dataurl(image);
+
+    
+    // TODO: Call a function send_fundus with token (&str) and dataurl (&str). If successfull, get result (struct FundusData), if not — print an error message;
     // TODO: Check if database with table exists. If not, initialize it first.
     // TODO: Rename an image to hash name
 
