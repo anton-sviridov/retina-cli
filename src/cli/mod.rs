@@ -33,7 +33,7 @@ pub enum Commands {
         #[arg(short, long, required = true)]
         password: String,
     
-        #[arg(short, long, required = true)]
+        #[arg(long, required = true)]
         path: String,
     },
     Report {
