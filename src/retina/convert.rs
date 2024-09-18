@@ -1,18 +1,24 @@
-use base64_url;
-use image::{DynamicImage, EncodableLayout};
-use webp::Encoder;
+use image::DynamicImage;
+
+use dataurl::DataUrl;
+use std::io::Cursor;
+
 
 // TODO: add error handling: pub fn convert_dataurl() -> Result<String, String>;
 pub fn convert_dataurl(image: DynamicImage) -> String {
-    // TODO: convert the image to webp using crate "webp":
-    let encoder: Encoder = Encoder::from_image(&image).unwrap();
+    let mut bytes: Vec<u8> = Vec::new();
+    image.write_to(&mut Cursor::new(&mut bytes), image::ImageFormat::WebP).unwrap();
 
-    let webp_image = encoder.encode(100f32);
 
-    // TODO: convert webp to byte array [u8]
-    let bytes_image = webp_image.as_bytes();
-    println!("{:?}", &bytes_image);
+    let mut dataurl = DataUrl::new();
+    dataurl.set_data(&bytes);
+    dataurl.set_media_type(Some("image/webp".to_string()));
+    dataurl.set_is_base64_encoded(true);
 
-    // TODO: encode array to Data URL
-    base64_url::encode(bytes_image)
+    dataurl.to_string()
+
+
+
+
+
 }

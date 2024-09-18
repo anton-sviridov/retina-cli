@@ -9,14 +9,16 @@ pub fn send_fundus(token: &str, data_url: &str) -> Result<FundusData, String> {
     fundus_data.insert("token", token);
     fundus_data.insert("image", data_url);
 
-    println!("{:#?}", fundus_data);
-
+    // println!("{:#?}", fundus_data);
+    
     let fundus_str_result = serde_json::to_string(&fundus_data);
+    println!("{:#?}", fundus_str_result);
+
     let fundus_str = match fundus_str_result {
         Ok(res) => res,
         Err(err) => return Err(err.to_string()),
     };
-    println!("{:#?}", fundus_str);
+    // println!("{:#?}", fundus_str);
 
     let fundus_response_result = client
         .post("https://functions.yandexcloud.net/d4e5t0njkd4f1mb9kh5l")
