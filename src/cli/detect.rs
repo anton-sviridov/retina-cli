@@ -9,6 +9,7 @@ use crate::retina::{login::login, send_fundus::send_fundus};
 use crate::retina::FundusData;
 use image::DynamicImage;
 
+use rusqlite::Connection;
 
 pub fn detect(database: &str, email: &str, password: &str, path: &str) {
     let token = login(email, password).unwrap();
@@ -24,16 +25,26 @@ pub fn detect(database: &str, email: &str, password: &str, path: &str) {
     // let dataurl = format!("data:image/webp;base64,{}", convert_dataurl(image));
     
     let dataurl = convert_dataurl(image);
-    println!("{dataurl}");
+    // println!("{dataurl}");
     
     
-    // TODO: Call a function send_fundus with token (&str) and dataurl (&str). If successfull, get result (struct FundusData), if not — print an error message;
+    // Call a function send_fundus with token (&str) and dataurl (&str). If successfull, get result (struct FundusData), if not — print an error message;
     let fundus_response = send_fundus(token.as_str(), dataurl.as_str()).unwrap();
 
-    println!("{:?}", fundus_response);
+    // println!("{:?}", fundus_response);
+    
     // TODO: Check if database with table exists. If not, initialize it first.
+    let conn = Connection::open("retina.sqlite3").unwrap();
     
-    
+    conn.execute(
+        "create table if not exists detections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            image TEXT NOT NULL,
+            description TEXT NOT NULL,
+            date TEXT NOT NULL
+         )",
+        (),
+    ).unwrap();
     
     // TODO: Rename an image to hash name
 
